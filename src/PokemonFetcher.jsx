@@ -13,8 +13,8 @@ useEffect(() => {
         const fetchedPokemones = [];
         const pokemonIds = new Set(); // Usar un Set para asegurar IDs únicos
 
-        // Generar 4 IDs de Pokémon únicos aleatorios
-        while (pokemonIds.size < 4) {
+        // Generar 6 IDs de Pokémon únicos aleatorios
+        while (pokemonIds.size < 6) {
           const randomId = Math.floor(Math.random() * 898) + 1; // 898 es el número actual de Pokémon en la PokeAPI (puedes ajustarlo)
           pokemonIds.add(randomId);
         }
@@ -56,7 +56,7 @@ useEffect(() => {
 
   return (
     <div className='pokemon-container'>
-      <h2>Tus 4 Pokémon Aleatorios</h2>
+      <h2>Tus 6 Pokémon Aleatorios</h2>
       <div className="pokemon-list"> 
         {pokemones.map(pokemon => (
           <div key={pokemon.id} className="pokemon-card">
