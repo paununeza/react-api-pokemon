@@ -3,10 +3,14 @@ import PokemonSearch from './PokemonSearch';
 
 function App() {
   return (
-    <>
-      <h1>¡Busca a tu Pokémon favorito!</h1>
-      <PokemonSearch />
-    </>
+    <div className="container">
+      <div className="sidebar">
+        <h2>Pokédex</h2>
+      </div>
+      <div className="main-content">
+        <PokemonSearch />
+      </div>
+    </div>
   );
 }
 
