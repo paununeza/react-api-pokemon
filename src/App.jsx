@@ -1,11 +1,11 @@
 import React from 'react';
-import PokemonFetcher from './PokemonFetcher';
+import PokemonSearch from './PokemonSearch';
 
-function App(){
+function App() {
   return (
     <>
-    <h1>¡Conoce a tus Pokemon!</h1>
-    <PokemonFetcher />
+      <h1>¡Busca a tu Pokémon favorito!</h1>
+      <PokemonSearch />
     </>
   );
 }
