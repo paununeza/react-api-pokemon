@@ -163,3 +163,44 @@ button:hover {
     transform: scale(1);
   }
 }
+
+.historial-sidebar {
+  overflow-y: auto;
+  max-height: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.historial-item {
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 12px;
+  padding: 8px;
+  text-align: center;
+  font-size: 0.8rem;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 1px 1px 4px rgba(0,0,0,0.05);
+}
+
+.historial-item img {
+  width: 48px;
+  height: 48px;
+  image-rendering: pixelated;
+}
+
+.sidebar {
+  overflow-y: auto;
+}
+
+.historial-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.historial-sidebar::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 3px;
+}

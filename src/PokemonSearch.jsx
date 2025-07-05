@@ -23,12 +23,13 @@ const tipoColores = {
 };
 
 
-const PokemonSearch = () => {
+const PokemonSearch = ({ setHistorial, historial }) => {
   const [todos, setTodos] = useState([]);
   const [busqueda, setBusqueda] = useState('');
   const [sugerencias, setSugerencias] = useState([]);
   const [pokemon, setPokemon] = useState(null);
   const [error, setError] = useState(null);
+  const [cargando, setCargando] = useState(false);
 
   // Cargar todos los nombres con URL
   useEffect(() => {
@@ -78,22 +79,45 @@ const PokemonSearch = () => {
   };
 
   const buscarPokemon = async (nombre) => {
+    if (!nombre) return;
     try {
+      setCargando(true);
       setError(null);
       setPokemon(null);
       const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${nombre.toLowerCase()}`);
       if (!res.ok) throw new Error('Pokémon no encontrado');
+      
       const data = await res.json();
-      setPokemon({
-        id: data.id,
-        nombre: data.name,
-        imagen: data.sprites.front_default,
-        tipos: data.types.map(t => t.type.name),
+
+      const nuevoPokemon = {
+      id: data.id,
+      nombre: data.name,
+      imagen: data.sprites.front_default,
+      tipos: data.types.map(t => t.type.name),
+    };
+
+      setPokemon(nuevoPokemon);
+
+    
+      setHistorial((prev) => {
+        const yaExiste = prev.find(p => p.id === nuevoPokemon.id);
+        if (yaExiste) {
+          // Mover el existente al inicio
+          const filtrado = prev.filter(p => p.id !== nuevoPokemon.id);
+          return [nuevoPokemon, ...filtrado];
+        }
+
+        const nuevoHistorial = [nuevoPokemon, ...prev];
+        return nuevoHistorial.slice(0, 4); // Máximo 4 pokemon en el historial
       });
-    } catch (err) {
-      setError('Pokémon no encontrado');
-    }
-  };
+
+
+  } catch (err) {
+    setError(err.message);
+  } finally {
+    setCargando(false);
+  }
+};
 
   const handleSubmit = (e) => {
     e.preventDefault();
