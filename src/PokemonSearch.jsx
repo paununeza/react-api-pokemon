@@ -1,20 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import './PokemonSearch.css';
 
+const tipoColores = {
+  normal: '#A8A77A',
+  fire: '#EE8130',
+  water: '#6390F0',
+  electric: '#F7D02C',
+  grass: '#7AC74C',
+  ice: '#96D9D6',
+  fighting: '#C22E28',
+  poison: '#A33EA1',
+  ground: '#E2BF65',
+  flying: '#A98FF3',
+  psychic: '#F95587',
+  bug: '#A6B91A',
+  rock: '#B6A136',
+  ghost: '#735797',
+  dragon: '#6F35FC',
+  dark: '#705746',
+  steel: '#B7B7CE',
+  fairy: '#D685AD',
+};
+
+
 const PokemonSearch = () => {
-  const [nombres, setNombres] = useState([]);
+  const [todos, setTodos] = useState([]);
   const [busqueda, setBusqueda] = useState('');
   const [sugerencias, setSugerencias] = useState([]);
   const [pokemon, setPokemon] = useState(null);
   const [error, setError] = useState(null);
 
-  // 1. Cargar lista de nombres al montar
+  // Cargar todos los nombres con URL
   useEffect(() => {
     const fetchNombres = async () => {
       try {
         const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1000');
         const data = await res.json();
-        setNombres(data.results.map(p => p.name));
+        setTodos(data.results); // [{name, url}]
       } catch (err) {
         setError('No se pudieron cargar los nombres de Pokémon');
       }
@@ -23,8 +45,8 @@ const PokemonSearch = () => {
     fetchNombres();
   }, []);
 
-  // 2. Manejar entrada de búsqueda y sugerencias
-  const handleInputChange = (e) => {
+  // Manejar input de búsqueda
+  const handleInputChange = async (e) => {
     const valor = e.target.value.toLowerCase();
     setBusqueda(valor);
     if (valor.length === 0) {
@@ -32,14 +54,29 @@ const PokemonSearch = () => {
       return;
     }
 
-    const filtradas = nombres
-      .filter(nombre => nombre.startsWith(valor))
-      .slice(0, 5); // solo 5 sugerencias
+    const coincidencias = todos
+      .filter(p => p.name.startsWith(valor))
+      .slice(0, 5);
 
-    setSugerencias(filtradas);
+    // Fetch sprites solo para sugerencias visibles
+    const sugerenciasConSprites = await Promise.all(
+      coincidencias.map(async p => {
+        try {
+          const res = await fetch(p.url);
+          const data = await res.json();
+          return {
+            nombre: p.name,
+            sprite: data.sprites.front_default
+          };
+        } catch {
+          return { nombre: p.name, sprite: null };
+        }
+      })
+    );
+
+    setSugerencias(sugerenciasConSprites);
   };
 
-  // 3. Buscar Pokémon
   const buscarPokemon = async (nombre) => {
     try {
       setError(null);
@@ -81,13 +118,14 @@ const PokemonSearch = () => {
 
       {sugerencias.length > 0 && (
         <ul className="sugerencias">
-          {sugerencias.map((nombre, i) => (
+          {sugerencias.map((s, i) => (
             <li key={i} onClick={() => {
-              setBusqueda(nombre);
-              buscarPokemon(nombre);
+              setBusqueda(s.nombre);
+              buscarPokemon(s.nombre);
               setSugerencias([]);
             }}>
-              {nombre.charAt(0).toUpperCase() + nombre.slice(1)}
+              {s.sprite && <img src={s.sprite} alt={s.nombre} className="miniatura" />}
+              {s.nombre.charAt(0).toUpperCase() + s.nombre.slice(1)}
             </li>
           ))}
         </ul>
@@ -99,7 +137,18 @@ const PokemonSearch = () => {
         <div className="pokemon-card">
           <h3>{pokemon.nombre.charAt(0).toUpperCase() + pokemon.nombre.slice(1)}</h3>
           <img src={pokemon.imagen} alt={pokemon.nombre} />
-          <p><strong>Tipos:</strong> {pokemon.tipos.map(tipo => tipo.charAt(0).toUpperCase() + tipo.slice(1)).join(', ')}</p>
+          <div className="tipos">
+            {pokemon.tipos.map((tipo, i) => (
+              <span
+                key={i}
+                className="tipo"
+                style={{ backgroundColor: tipoColores[tipo] || '#777' }}
+              >
+              {tipo.charAt(0).toUpperCase() + tipo.slice(1)}
+            </span>
+            ))}
+          </div>
+
         </div>
       )}
     </div>
