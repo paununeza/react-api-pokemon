@@ -7,7 +7,7 @@ function App() {
   return (
     <div className="container">
       <div className="sidebar">
-        <h2>Pokédex</h2>
+        <h2>Historial</h2>
         {historial.length > 0 && (
           <div className="historial-sidebar">
             {historial.map((p) => (
