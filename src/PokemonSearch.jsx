@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './PokemonSearch.css';
+import selectSound from './assets/sounds/select.mp3';
 
 const tipoColores = {
   normal: '#A8A77A',
@@ -23,7 +24,7 @@ const tipoColores = {
 };
 
 
-const PokemonSearch = ({ setHistorial, historial }) => {
+const PokemonSearch = ({ setHistorial, historial, pokemonSeleccionado }) => {
   const [todos, setTodos] = useState([]);
   const [busqueda, setBusqueda] = useState('');
   const [sugerencias, setSugerencias] = useState([]);
@@ -45,6 +46,15 @@ const PokemonSearch = ({ setHistorial, historial }) => {
 
     fetchNombres();
   }, []);
+
+  useEffect(() => {
+  if (pokemonSeleccionado) {
+    buscarPokemon(pokemonSeleccionado.nombre);
+    setBusqueda('');
+    setSugerencias([]);
+  }
+}, [pokemonSeleccionado]);
+
 
   // Manejar input de búsqueda
   const handleInputChange = async (e) => {
@@ -78,8 +88,17 @@ const PokemonSearch = ({ setHistorial, historial }) => {
     setSugerencias(sugerenciasConSprites);
   };
 
+  const reproducirSonido = () => {
+  const audio = new Audio(selectSound);
+  audio.currentTime = 0;
+  audio.play();
+  };
+
   const buscarPokemon = async (nombre) => {
     if (!nombre) return;
+
+    reproducirSonido();
+    
     try {
       setCargando(true);
       setError(null);
@@ -123,6 +142,7 @@ const PokemonSearch = ({ setHistorial, historial }) => {
     e.preventDefault();
     if (busqueda.trim()) {
       buscarPokemon(busqueda.trim());
+      setBusqueda('');
       setSugerencias([]);
     }
   };
