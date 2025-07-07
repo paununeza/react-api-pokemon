@@ -23,22 +23,24 @@ const tipoColores = {
   fairy: '#D685AD',
 };
 
-
+// Componente principal del buscador Pokémon
+// Para buscar Pokémon por nombre, mostrar sugerencias y ver detalles del Pokémon seleccionado
 const PokemonSearch = ({ setHistorial, historial, pokemonSeleccionado }) => {
+  // Estados locales
   const [todos, setTodos] = useState([]);
-  const [busqueda, setBusqueda] = useState('');
+  const [busqueda, setBusqueda] = useState(''); // Texto ingresado en el input
   const [sugerencias, setSugerencias] = useState([]);
   const [pokemon, setPokemon] = useState(null);
   const [error, setError] = useState(null);
   const [cargando, setCargando] = useState(false);
 
-  // Cargar todos los nombres con URL
+  // Cargar lista de los 1000 primeros Pokémon desde la API
   useEffect(() => {
     const fetchNombres = async () => {
       try {
         const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1000');
         const data = await res.json();
-        setTodos(data.results); // [{name, url}]
+        setTodos(data.results);
       } catch (err) {
         setError('No se pudieron cargar los nombres de Pokémon');
       }
@@ -47,6 +49,7 @@ const PokemonSearch = ({ setHistorial, historial, pokemonSeleccionado }) => {
     fetchNombres();
   }, []);
 
+// Efecto para buscar Pokémon cuando se selecciona uno del historial
   useEffect(() => {
   if (pokemonSeleccionado) {
     buscarPokemon(pokemonSeleccionado.nombre);
@@ -67,7 +70,7 @@ const PokemonSearch = ({ setHistorial, historial, pokemonSeleccionado }) => {
 
     const coincidencias = todos
       .filter(p => p.name.startsWith(valor))
-      .slice(0, 5);
+      .slice(0, 5); // Limitar a 5 sugerencias
 
     // Fetch sprites solo para sugerencias visibles
     const sugerenciasConSprites = await Promise.all(
@@ -87,18 +90,19 @@ const PokemonSearch = ({ setHistorial, historial, pokemonSeleccionado }) => {
 
     setSugerencias(sugerenciasConSprites);
   };
-
+  // Reproducir sonido al buscar Pokémon
   const reproducirSonido = () => {
   const audio = new Audio(selectSound);
   audio.currentTime = 0;
   audio.play();
   };
 
+  // Función para buscar un Pokémon por nombre
   const buscarPokemon = async (nombre) => {
     if (!nombre) return;
 
     reproducirSonido();
-    
+
     try {
       setCargando(true);
       setError(null);
@@ -107,7 +111,7 @@ const PokemonSearch = ({ setHistorial, historial, pokemonSeleccionado }) => {
       if (!res.ok) throw new Error('Pokémon no encontrado');
       
       const data = await res.json();
-
+      // Crear objeto Pokémon con la información necesaria
       const nuevoPokemon = {
       id: data.id,
       nombre: data.name,
@@ -117,11 +121,11 @@ const PokemonSearch = ({ setHistorial, historial, pokemonSeleccionado }) => {
 
       setPokemon(nuevoPokemon);
 
-    
+      // Actualizar historial de búsqueda sin duplicados y max. 4 pokémon
       setHistorial((prev) => {
         const yaExiste = prev.find(p => p.id === nuevoPokemon.id);
         if (yaExiste) {
-          // Mover el existente al inicio
+          // Si ya estaba, mover al inicio
           const filtrado = prev.filter(p => p.id !== nuevoPokemon.id);
           return [nuevoPokemon, ...filtrado];
         }
@@ -137,7 +141,7 @@ const PokemonSearch = ({ setHistorial, historial, pokemonSeleccionado }) => {
     setCargando(false);
   }
 };
-
+  // Manejar envío del formulario
   const handleSubmit = (e) => {
     e.preventDefault();
     if (busqueda.trim()) {
@@ -147,9 +151,12 @@ const PokemonSearch = ({ setHistorial, historial, pokemonSeleccionado }) => {
     }
   };
 
+  // Renderizar el componente
   return (
     <div className="pokemon-container">
       <h2>Buscador de Pokémon</h2>
+    
+      {/* Formulario de búsqueda */}
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -160,10 +167,11 @@ const PokemonSearch = ({ setHistorial, historial, pokemonSeleccionado }) => {
         <button type="submit">Buscar</button>
       </form>
 
+    {/* Lista de sugerencias */}
       {sugerencias.length > 0 && (
         <ul className="sugerencias">
-          {sugerencias.map((s, i) => (
-            <li key={i} onClick={() => {
+          {sugerencias.map((s, i) => (        // Mostrar sugerencias con sprites
+            <li key={i} onClick={() => {      
               setBusqueda(s.nombre);
               buscarPokemon(s.nombre);
               setSugerencias([]);
@@ -177,6 +185,7 @@ const PokemonSearch = ({ setHistorial, historial, pokemonSeleccionado }) => {
 
       {error && <div className="error">{error}</div>}
 
+      {/* Tarjeta con información del Pokémon */}
       {pokemon && (
         <div className="pokemon-card">
           <h3>{pokemon.nombre.charAt(0).toUpperCase() + pokemon.nombre.slice(1)}</h3>
@@ -186,9 +195,9 @@ const PokemonSearch = ({ setHistorial, historial, pokemonSeleccionado }) => {
               <span
                 key={i}
                 className="tipo"
-                style={{ backgroundColor: tipoColores[tipo] || '#777' }}
+                style={{ backgroundColor: tipoColores[tipo] || '#777' }} // Mostrar tipos con colores
               >
-              {tipo.charAt(0).toUpperCase() + tipo.slice(1)}
+              {tipo.charAt(0).toUpperCase() + tipo.slice(1)} 
             </span>
             ))}
           </div>

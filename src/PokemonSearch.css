@@ -1,8 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
+/* Neumorfismo: Sombras suaves, bordes difusos, sensación de volumen */
+/* Glassmorphism	Transparencia y desenfoque del fondo */
+
+/* Estilo base */
 body {
   font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #fce2d3, #dcd1ff);
+  background: linear-gradient(135deg, #fce2d3, #dcd1ff); /* Fondo degradado */
   margin: 0;
   padding: 0;
   height: 100vh;
@@ -14,13 +18,13 @@ body {
 .container {
   width: 1000px;
   height: 600px;
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.3); /* Transparencia tipo glass */
   border-radius: 20px;
-  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1); /* Sombra difusa suave */
+  backdrop-filter: blur(12px); /* Efecto glass real */
+  -webkit-backdrop-filter: blur(12px); /* para navegadores basados en WebKit (Chrome, Safari o Edge)*/
   display: flex;
-  overflow: hidden;
+  overflow: hidden; 
 }
 
 .sidebar {
@@ -64,7 +68,7 @@ input {
   border-radius: 12px;
   border: none;
   background-color: rgba(255, 255, 255, 0.6);
-  box-shadow: inset 2px 2px 5px #ffffff50, inset -2px -2px 5px #0000000a;
+  box-shadow: inset 2px 2px 5px #ffffff50, inset -2px -2px 5px #0000000a; /* Neumorfismo */
   outline: none;
 }
 
@@ -77,7 +81,7 @@ button {
   font-weight: bold;
   cursor: pointer;
   box-shadow: 2px 2px 5px #ffffff50, -2px -2px 5px #0000000a;
-  transition: background 0.2s;
+  transition: background 0.2s; /* Transición suave al pasar el mouse */
 }
 
 button:hover {
@@ -115,7 +119,7 @@ button:hover {
   image-rendering: pixelated;
 }
 
-/* Tarjeta del Pokémon */
+/* Tarjeta de Pokémon */
 .pokemon-card {
   margin-top: 2rem;
   background: rgba(255, 255, 255, 0.3);
@@ -125,7 +129,7 @@ button:hover {
   box-shadow: 0 8px 24px rgba(0,0,0,0.1);
   backdrop-filter: blur(10px);
   width: 300px;
-  animation: pixelFadeIn 0.4s ease-out;
+  animation: pixelFadeIn 0.4s ease-out; /* Aparición suave */
 }
 
 .pokemon-card img {
@@ -152,8 +156,8 @@ button:hover {
   text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
 }
 
-/* Animación */
-@keyframes pixelFadeIn {
+/* Animación al cargar */
+@keyframes pixelFadeIn { 
   from {
     opacity: 0;
     transform: scale(0.5);
@@ -164,6 +168,7 @@ button:hover {
   }
 }
 
+/* Historial de búsqueda */
 .historial-sidebar {
   overflow-y: auto;
   max-height: 400px;
@@ -203,4 +208,49 @@ button:hover {
 .historial-sidebar::-webkit-scrollbar-thumb {
   background-color: #ccc;
   border-radius: 3px;
+}
+
+/* Responsive   */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    height: auto;
+    width: 90%;
+  }
+
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 10px;
+  }
+
+  .historial-sidebar {
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+    max-height: none;
+    width: 100%;
+  }
+
+  .historial-item {
+    flex: 0 0 auto;
+  }
+
+  .main-content {
+    padding: 40px;
+  }
+
+  form {
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+
+  input, button {
+    width: 100%;
+  }
 }

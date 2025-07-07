@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import PokemonSearch from './PokemonSearch';
 
+
 function App() {
+  // Estado para almacenar el historial
   const [historial, setHistorial] = useState([]);
+  // Estado para el Pokémon que se selecciona desde el historial
   const [pokemonSeleccionado, setPokemonSeleccionado] = useState(null);
 
   return (
@@ -11,6 +14,7 @@ function App() {
         <h2>Historial</h2>
         {historial.length > 0 && (
           <div className="historial-sidebar">
+             {/* Recorre el historial y renderiza cada Pokémon */}
             {historial.map((p) => (
               <div
                 key={p.id}
